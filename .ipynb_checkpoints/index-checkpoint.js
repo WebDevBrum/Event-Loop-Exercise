@@ -1,9 +1,30 @@
-console.log("Print Fifth");
+const fs = require('fs');
 
-console.log("Print Third");
 
-console.log('Print Second');
+process.on('beforeExit', () => {
+    console.log("Print Fifth");
+});
 
-console.log('Print First');
+// begin polling phase
+fs.readFile(__filename, () => {
+  process.nextTick(() => {
+    console.log("Print Third");
 
-console.log("Print Forth");
+});
+});
+
+// timers phase 1
+setImmediate(() => {
+    console.log('Print Second');
+});
+
+// end mainline, pre timers phase
+process.nextTick(() => {
+    console.log('Print First');
+});
+
+// timers phase 2
+setTimeout(() => {
+    console.log("Print Forth");
+}, 5000);
+
